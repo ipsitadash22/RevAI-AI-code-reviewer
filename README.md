@@ -43,7 +43,8 @@ An AI-powered code review tool that leverages Google’s Gemini 2.0 Flash model 
 
    ```bash
    cd backend
-````
+   ```bash
+
 
 2. Install dependencies:
 
@@ -65,13 +66,6 @@ An AI-powered code review tool that leverages Google’s Gemini 2.0 Flash model 
 
 The backend server will run at: [http://localhost:3000](http://localhost:3000)
 
-Absolutely! Here's your **Frontend Setup**, **Usage**, **Future Plans**, **Contribution**, and **License** sections with emojis — in plain text format:
-
----
-
-Got it! Here's a **cleaned-up version** with **minimal emojis** for clarity and a professional tone:
-
----
 
 ### Frontend Setup
 
