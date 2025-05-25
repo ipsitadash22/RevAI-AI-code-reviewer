@@ -25,6 +25,8 @@ An AI-powered code review tool that leverages Google’s Gemini 2.0 Flash model 
 | HTTP Client     | Axios                                            |
 | Styling         | CSS (custom styles)                               |
 
+📁 Project Structure
+
 AI_Code_Reviewer/
 ├── backend/
 │   ├── src/
@@ -48,6 +50,7 @@ AI_Code_Reviewer/
 │   ├── package.json            # Frontend dependencies & scripts
 │   ├── README.md               # Frontend-specific README (optional)
 │   └── vite.config.js          # Vite bundler configuration
+
 
 ## ⚙️ Local Setup & Installation
 
