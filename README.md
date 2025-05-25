@@ -25,33 +25,29 @@ An AI-powered code review tool that leverages Google’s Gemini 2.0 Flash model 
 | HTTP Client     | Axios                                            |
 | Styling         | CSS (custom styles)                               |
 
-## 📁 Project Structure
-
 AI_Code_Reviewer/
 ├── backend/
 │   ├── src/
-│   │   ├── controllers/          # API route handlers
-│   │   ├── routers/              # Express routes
-│   │   ├── services/             # Gemini API integration
-│   │   └── app.js                # Express app setup
-│   ├── server.js                 # Server entry point
-│   └── .env                     # Environment variables (API keys)
+│   │   ├── controllers/        # API route handlers (e.g., ai.controller.js)
+│   │   ├── routers/            # Express routes
+│   │   ├── services/           # Gemini API integration (e.g., ai.services.js)
+│   │   └── app.js              # Express app setup
+│   ├── server.js               # Server entry point
+│   └── .env                    # Environment variables (e.g., Gemini API key)
+│
 ├── frontend/
-│   ├── public/                   # Static files
-│   ├── src/                     # React app source code
-│   │   ├── App.jsx              # Main app component
-│   │   ├── App.css              # Styling
-│   │   ├── main.jsx             # React DOM render
-│   │   └── index.css            # Global CSS
-│   ├── .gitignore               # Git ignore rules
-│   ├── eslint.config.js         # ESLint configuration
-│   ├── index.html               # Main HTML file
-│   ├── package.json             # Frontend dependencies & scripts
-│   ├── README.md                # Frontend-specific README (optional)
-│   └── vite.config.js           # Vite bundler configuration
-
-
----
+│   ├── public/                 # Static files
+│   ├── src/                    # React app source code
+│   │   ├── App.jsx             # Main app component
+│   │   ├── App.css             # Styling for App
+│   │   ├── main.jsx            # React DOM entry point
+│   │   └── index.css           # Global styles
+│   ├── .gitignore              # Git ignore rules
+│   ├── eslint.config.js        # ESLint configuration
+│   ├── index.html              # Main HTML file
+│   ├── package.json            # Frontend dependencies & scripts
+│   ├── README.md               # Frontend-specific README (optional)
+│   └── vite.config.js          # Vite bundler configuration
 
 ## ⚙️ Local Setup & Installation
 
