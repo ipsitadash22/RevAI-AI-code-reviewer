@@ -8,8 +8,6 @@ import "highlight.js/styles/github-dark.css";
 import axios from "axios";
 import "./App.css";
 
-// Predefined code templates for each language
-// When the user switches language, the editor loads these snippets
 const templates = {
   javascript: `function sum() {\n  return 1 + 1;\n}`,
   cpp: `#include <iostream>\nusing namespace std;\n\nint main() {\n  cout << 1 + 1;\n  return 0;\n}`,
@@ -18,17 +16,12 @@ const templates = {
 };
 
 function App() {
-  // State for selected programming language
   const [language, setLanguage] = useState("javascript");
-
-  // State for AI review result
   const [review, setReview] = useState("");
-
-  // State for code editor content
   const [code, setCode] = useState(templates.javascript);
 
-  // Load language syntax dynamically when language changes
-  // This avoids loading all languages upfront and improves performance
+  const backendURL = import.meta.env.VITE_BACKEND_URL.replace(/\/$/, "");
+
   useEffect(() => {
     async function loadLanguage() {
       if (language === "cpp" && !prism.languages.cpp) {
@@ -40,22 +33,17 @@ function App() {
       if (language === "python" && !prism.languages.python) {
         await import("prismjs/components/prism-python");
       }
-
-      // Highlight all code blocks after loading the language
       prism.highlightAll();
     }
-
     loadLanguage();
-  }, [language, code]); // Runs whenever language or code changes
+  }, [language, code]);
 
-  // Function to send code + language to backend for AI review
   async function reviewCode() {
     try {
-      const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/ai/get-review`, {
-       code,
-       language
-       });
-
+      const response = await axios.post(`${backendURL}/ai/get-review`, {
+        code,
+        language
+      });
 
       const result =
         typeof response.data === "string"
@@ -72,20 +60,16 @@ function App() {
   return (
     <>
       <header>
-        <h1 className="title">🤖 RevAI – Your AI Code Reviewer</h1>
+        <h1 className="title">RevAI – Your AI Code Reviewer</h1>
       </header>
 
       <main>
         <div className="left" style={{ position: "relative" }}>
-          {/* Language selector dropdown */}
           <select
             value={language}
             onChange={(e) => {
               const selectedLang = e.target.value;
               setLanguage(selectedLang);
-
-              // Load default template code when language changes
-              // This removes the need to refresh manually
               setCode(templates[selectedLang]);
             }}
             style={{
@@ -107,9 +91,6 @@ function App() {
             <option value="java">Java</option>
           </select>
 
-          {/* Code editor component */}
-          {/* The key={language} forces the editor to remount when the language changes */}
-          {/* This fixes the issue where syntax highlighting required a manual refresh */}
           <div className="code">
             <Editor
               key={language}
@@ -134,13 +115,11 @@ function App() {
             />
           </div>
 
-          {/* Review button */}
           <div onClick={reviewCode} className="review">
             Review
           </div>
         </div>
 
-        {/* Display AI review in Markdown format */}
         <div className="right">
           <Markdown rehypePlugins={[rehypeHighlight]}>{review || ""}</Markdown>
         </div>
