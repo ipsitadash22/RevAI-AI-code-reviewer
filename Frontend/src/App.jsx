@@ -8,51 +8,52 @@ import "highlight.js/styles/github-dark.css";
 import axios from "axios";
 import "./App.css";
 
-// Import additional Prism languages
-//import "prismjs/components/prism-python";
-//import "prismjs/components/prism-java";
-import "prismjs/components/prism-clike"; 
-//import "prismjs/components/prism-cpp";
+// Predefined code templates for each language
+// When the user switches language, the editor loads these snippets
+const templates = {
+  javascript: `function sum() {\n  return 1 + 1;\n}`,
+  cpp: `#include <iostream>\nusing namespace std;\n\nint main() {\n  cout << 1 + 1;\n  return 0;\n}`,
+  python: `def sum():\n    return 1 + 1`,
+  java: `public class Main {\n  public static void main(String[] args) {\n    System.out.println(1 + 1);\n  }\n}`
+};
 
 function App() {
-  // Language state for the selected programming language
+  // State for selected programming language
   const [language, setLanguage] = useState("javascript");
 
-  // State for AI code review result
+  // State for AI review result
   const [review, setReview] = useState("");
 
   // State for code editor content
-  const [code, setCode] = useState(`function sum(){
-  return 1+1  
-}`);
+  const [code, setCode] = useState(templates.javascript);
 
-  // Re-highlight code whenever language or code changes
- useEffect(() => {
-  async function loadLanguage() {
-    // Dynamically load C++ support if selected
-    if (language === "cpp" && !prism.languages.cpp) {
-      await import("prismjs/components/prism-cpp");
+  // Load language syntax dynamically when language changes
+  // This avoids loading all languages upfront and improves performance
+  useEffect(() => {
+    async function loadLanguage() {
+      if (language === "cpp" && !prism.languages.cpp) {
+        await import("prismjs/components/prism-cpp");
+      }
+      if (language === "java" && !prism.languages.java) {
+        await import("prismjs/components/prism-java");
+      }
+      if (language === "python" && !prism.languages.python) {
+        await import("prismjs/components/prism-python");
+      }
+
+      // Highlight all code blocks after loading the language
+      prism.highlightAll();
     }
-    // Add support for other languages too if needed
-    if (language === "java" && !prism.languages.java) {
-      await import("prismjs/components/prism-java");
-    }
-    if (language === "python" && !prism.languages.python) {
-      await import("prismjs/components/prism-python");
-    }
 
-    prism.highlightAll();
-  }
+    loadLanguage();
+  }, [language, code]); // Runs whenever language or code changes
 
-  loadLanguage();
-}, [language, code]);
-
-  // Function to send code and language to backend for AI review
+  // Function to send code + language to backend for AI review
   async function reviewCode() {
     try {
       const response = await axios.post("http://localhost:3000/ai/get-review", {
         code,
-        language,
+        language
       });
 
       const result =
@@ -78,7 +79,14 @@ function App() {
           {/* Language selector dropdown */}
           <select
             value={language}
-            onChange={(e) => setLanguage(e.target.value)}
+            onChange={(e) => {
+              const selectedLang = e.target.value;
+              setLanguage(selectedLang);
+
+              // Load default template code when language changes
+              // This removes the need to refresh manually
+              setCode(templates[selectedLang]);
+            }}
             style={{
               position: "absolute",
               top: "1rem",
@@ -89,19 +97,21 @@ function App() {
               fontWeight: "bold",
               background: "#dbeafe",
               color: "#000",
-              zIndex: 10,
+              zIndex: 10
             }}
           >
-        <option value="javascript">JavaScript</option>
-        <option value="cpp">C++</option>
-        <option value="python">Python</option>
-        <option value="java">Java</option>
-
+            <option value="javascript">JavaScript</option>
+            <option value="cpp">C++</option>
+            <option value="python">Python</option>
+            <option value="java">Java</option>
           </select>
 
-          {/* Code editor */}
+          {/* Code editor component */}
+          {/* The key={language} forces the editor to remount when the language changes */}
+          {/* This fixes the issue where syntax highlighting required a manual refresh */}
           <div className="code">
             <Editor
+              key={language}
               value={code}
               onValueChange={(code) => setCode(code)}
               highlight={(code) =>
@@ -118,7 +128,7 @@ function App() {
                 border: "1px solid #ddd",
                 borderRadius: "5px",
                 height: "100%",
-                width: "100%",
+                width: "100%"
               }}
             />
           </div>
@@ -129,7 +139,7 @@ function App() {
           </div>
         </div>
 
-        {/* Display AI review */}
+        {/* Display AI review in Markdown format */}
         <div className="right">
           <Markdown rehypePlugins={[rehypeHighlight]}>{review || ""}</Markdown>
         </div>
