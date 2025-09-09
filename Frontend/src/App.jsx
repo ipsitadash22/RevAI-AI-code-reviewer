@@ -20,7 +20,7 @@ function App() {
   const [review, setReview] = useState("");
   const [code, setCode] = useState(templates.javascript);
 
-  const backendURL = import.meta.env.VITE_BACKEND_URL.replace(/\/$/, "");
+  const backendURL = (import.meta.env.VITE_BACKEND_URL || "").replace(/\/$/, "");
 
   useEffect(() => {
     async function loadLanguage() {
@@ -39,7 +39,13 @@ function App() {
   }, [language, code]);
 
   async function reviewCode() {
+    if (!backendURL) {
+      setReview("Error: Backend URL is not set.");
+      return;
+    }
+
     try {
+      setReview("Processing..."); // Show loading state
       const response = await axios.post(`${backendURL}/ai/get-review`, {
         code,
         language
@@ -53,14 +59,14 @@ function App() {
       setReview(result);
     } catch (error) {
       setReview("Error: Unable to fetch review.");
-      console.error(error);
+      console.error("Review API Error:", error);
     }
   }
 
   return (
     <>
       <header>
-        <h1 className="title">RevAI – Your AI Code Reviewer</h1>
+        <h1 className="title">🤖 RevAI – Your AI Code Reviewer</h1>
       </header>
 
       <main>
@@ -71,6 +77,7 @@ function App() {
               const selectedLang = e.target.value;
               setLanguage(selectedLang);
               setCode(templates[selectedLang]);
+              setReview(""); // ✅ Clear previous review
             }}
             style={{
               position: "absolute",
